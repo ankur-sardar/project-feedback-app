@@ -18,7 +18,7 @@ class EmployeeListView extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       modalVisible: false,
-      apiResponse: ''
+      apiResponse: []
     };
   }
   showModal = () => {
@@ -61,6 +61,7 @@ class EmployeeListView extends React.Component<IProps, IState> {
             <Button onClick={this.showModal} className="addEmployee">
               Add New Employee
         </Button>
+            <h1>{this.state.apiResponse}</h1>
             <h1>{this.state.apiResponse}</h1>
             <Modal
               title="Add New Employee"
