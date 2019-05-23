@@ -1,0 +1,29 @@
+.employeeListSubheader{
+  font-family: Avenir-Medium;
+  font-size: 20px;
+  color: #333333;
+  letter-spacing: -0.73px;
+  margin-top: 2%;
+  /* margin-bottom: 2%; */
+  /* float: left; */
+  text-align: left;
+}
+
+.employeeListContainer {
+  /* margin: 1%; */
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.addEmployee{
+  font-family: Avenir-Medium;
+  /* font-size: 20px; */
+  /* color: #333333; */
+  /* letter-spacing: -0.73px; */
+  margin-top: 2%;
+  margin-left: 2%;
+  color: rgb(91, 194, 228);
+  /* margin-bottom: 2%; */
+  /* float: left; */
+  /* text-align: left; */
+}
