@@ -22,8 +22,74 @@
   /* letter-spacing: -0.73px; */
   margin-top: 2%;
   margin-left: 2%;
-  color: rgb(91, 194, 228);
+  color: rgb(139, 204, 226);
   /* margin-bottom: 2%; */
   /* float: left; */
   /* text-align: left; */
+}
+
+.shortlistTableName{
+  margin-left: 15%;
+}
+.tdCandidateName{
+  width: 60%;
+  /* width: 100%; */
+  height: auto;
+  text-align: left;
+  vertical-align: middle;
+}
+.profileCard{
+  width: 100%;
+  height:auto;
+  padding:10px 10px 10px 10px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: left;
+  /* box-shadow: 0px 0px 1px lightgray; */
+  overflow: auto;
+}
+.profileCard-profileImage{
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 20px;
+}
+
+.profileCard-profileImage img{
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 50%;
+  height: 60px;
+  width:60px
+}
+.profileCard-details{
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.profileCard-details__name{
+  display: block;
+  text-align: left;
+  font-size: 15px;
+  font-weight: bold;
+  color: #585d5e;
+}
+.tdCandidateJobTitle{
+  width: 20%;
+}
+.shortListedJobProfile{
+  vertical-align: middle;
+  font-size: 12px;
+  display: inline;
+  font-family: Avenir-Medium;
+}
+.tdCandidateShortlisted{
+  width: 20%;
+}
+.shortListedAction{
+  margin-right:20px;
+}
+.noData{
+  font-family: Avenir-Medium;
+  margin: 10%;
+  color: #585d5e
 }
