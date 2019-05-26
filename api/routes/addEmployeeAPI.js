@@ -17,12 +17,12 @@ router.post("/", function(req, res) {
   // var docData = JSON.parse(req.body);
   // console.log(docData);
   const docData = {
-    id = req.body.id,
-    name = req.body.name,
-    reviews = [],
-    reviewRequestedForEmployeesList = []
+    id : req.body.id,
+    name : req.body.name,
+    reviews : [],
+    reviewRequestedForEmployeesList : []
   }
-
+  console.log(docData);
   db.collection("employees")
     .doc(req.body.id)
     .set(docData)
