@@ -1,7 +1,12 @@
 import React from 'react';
 import { Navbar, Nav, Button } from "react-bootstrap";
-import './header.css';
+import { Redirect } from "react-router-dom";
 
+import './header.css';
+const logout = () => {
+  sessionStorage.removeItem("adminLoginId");
+  return <Redirect to="/" />;
+}
 const Header = () => {
   return (
      <div>
@@ -27,8 +32,8 @@ const Header = () => {
               </Nav>
               <Nav>
                 <Nav.Link href="/admin">
-                  <Button  id="bak1Head">
-                    Back
+                  <Button  id="bak1Head" onClick={logout}>
+                    Logout
                 </Button>
                 </Nav.Link>
               </Nav>

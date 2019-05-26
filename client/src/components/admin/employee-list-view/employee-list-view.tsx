@@ -1,69 +1,104 @@
 import React from 'react';
 import './employee-list-view.css';
-import { Button, Modal } from 'antd';
 import Header from '../header/header';
-import { Form } from 'react-bootstrap';
+import { Form, Button, Modal } from 'react-bootstrap';
+import EmployeeModel from '../../../models/employee';
+import { Redirect } from "react-router-dom";
+import EmployeeDetailsView from "./employee-details-view";
 
-import Employee from '../../../models/employee';
 
 interface IProps {
-  employeeList: Employee[],
-  handleSubmit: (value: string) => void,
+  employeeList: EmployeeModel[],
+  handleSubmit: (name: string, id: number) => void,
   removeEmployee: (id: number) => void
 }
 
-
 interface IState {
-  modalVisible: boolean;
+  addEmployeeModalVisible: boolean;
+  employeeModalVisible: boolean;
   apiResponse: Array<string>;
   employeeName: string;
+  employeeId: any;
+  validated: boolean;
+  selectedEmployeeDetails: any;
 }
 
 class EmployeeListView extends React.Component<IProps, IState> {
-  constructor(props: any) {
+  constructor(props: IProps) {
     super(props);
     this.state = {
-      modalVisible: false,
+      addEmployeeModalVisible: false,
+      employeeModalVisible: false,
       apiResponse: [],
-      employeeName: ''
+      employeeName: '',
+      employeeId: '',
+      validated: false,
+      selectedEmployeeDetails: ''
     };
   }
-  showModal = () => {
+  showAddEmployeeModal = () => {
     this.setState({
-      modalVisible: true,
+      addEmployeeModalVisible: true,
     });
   };
-  handleOk = (e: any) => {
-    console.log(this.state);
-    console.log(this.props);
-    this.props.handleSubmit(this.state.employeeName);
+  showEmployeeDetailsModal = ( employee: any) => {
+    console.log('Showing details');
     this.setState({
-      modalVisible: false,
-      employeeName: ''
-    });
-
-  };
-
-  handleCancel = (e: any) => {
-    console.log(e);
-    this.setState({
-      modalVisible: false,
-    });
-  };
-  callAPI = () => {
-    fetch('http://localhost:9000/testAPI')
-      .then(res => res.text())
-      .then(res => this.setState({ apiResponse: JSON.parse(res) }));
+      selectedEmployeeDetails: employee,
+      employeeModalVisible: true
+    })
   }
+  closeEmployeeDetailsModal = () => {
+    this.setState({
+      employeeModalVisible: false
+    })
+  }
+  handleOk = (event: any) => {
+    event.preventDefault();
+    console.log(this.props.employeeList);
+    console.log(this.props.employeeList.find(this.checkExistingEmployeeId));
+
+    const form = event.currentTarget;
+    if (form.checkValidity() === false || this.props.employeeList.find(this.checkExistingEmployeeId)) {
+      event.stopPropagation();
+      this.setState({
+        employeeId: ''
+      });
+    } else {
+      console.log('Success');
+      this.props.handleSubmit(this.state.employeeName, this.state.employeeId);
+      this.setState({
+        addEmployeeModalVisible: false,
+        employeeName: '',
+        employeeId: ''
+      });
+    }
+    this.setState({ validated: true });
+  };
+
+  checkExistingEmployeeId = (item: EmployeeModel) => {
+    return item.id === this.state.employeeId;
+  }
+  handleCancel = () => {
+    this.setState({
+      addEmployeeModalVisible: false,
+    });
+  };
 
   handleInputChange = (event: any) => {
     const target = event.target;
     const value = target.value;
-    console.log(value);
-    this.setState({
-      employeeName: value
-    });
-    // console.log(this.state.company);
+    const name = target.name;
+    console.log(name);
+    if (name === 'employeeName') {
+      this.setState({
+        employeeName: value
+      });
+    } else if (name === 'employeeId') {
+      this.setState({
+        employeeId: value
+      });
+    }
   }
 
   handleRemoveEmployee = (id: number) => {
@@ -72,18 +107,20 @@ class EmployeeListView extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    this.callAPI();
+    // this.callAPI();
   }
 
   render() {
-    console.log(this.props.employeeList);
+    if (sessionStorage.getItem('adminLoginId')==null) {
+      return <Redirect to="/" />;
+    }
     return (
       <div>
         <Header />
         <div className="employeeListContainer">
           <div className="row">
             <h1 className="employeeListSubheader">Employee List</h1>
-            <Button onClick={this.showModal} className="addEmployee">
+            <Button onClick={this.showAddEmployeeModal} className="addEmployee">
               Add New Employee
             </Button>
           </div>
@@ -127,48 +164,66 @@ class EmployeeListView extends React.Component<IProps, IState> {
                             Remove
                           </button>
 
-                          <button className="btn btn-info viewDetails" >
+                          <Button className="btn" onClick={() => this.showEmployeeDetailsModal(employee)}>
                             <div className="row shortlistButton">
                               <span className="col">
                                 View Profile
-                                      </span>
+                              </span>
                             </div>
-                          </button>
+                          </Button>
                         </td>
                       </tr>
-                    )) : 
+                    )) :
                     <h1 className="noData">No Data Found</h1>
-                    }
+                  }
                 </tbody>
               </table>
             </div>
             <Modal
-              title="Add New Employee"
-              centered
-              visible={this.state.modalVisible}
-              onOk={this.handleOk}
-              onCancel={this.handleCancel}
+              show={this.state.addEmployeeModalVisible}
+              onHide={this.handleCancel}
             >
+              <Modal.Header closeButton>
+                <Modal.Title>Add New Employee</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
               <div>
-                <Form>
-                  <Form.Group controlId="formBasicEmail">
+                <Form noValidate validated={this.state.validated} onSubmit={(e: any) => this.handleOk(e)}>
+                  <Form.Group controlId="employeeName">
                     <Form.Label>Employee Name</Form.Label>
-                    <Form.Control type="text" value={this.state.employeeName} name="employeeName" id="employeeName" placeholder="Enter Employee Name" onChange={this.handleInputChange} />
+                    <Form.Control required type="text" value={this.state.employeeName} name="employeeName" placeholder="Enter Employee Name" onChange={this.handleInputChange} />
+                    <Form.Control.Feedback type="invalid">
+                      Please choose a Name
+                    </Form.Control.Feedback>
                     <Form.Text className="text-muted">
                       We'll auto-generate the employee id, Please use employee id to login as employee
                     </Form.Text>
                   </Form.Group>
-                  {/* <Form.Group controlId="formBasicEmail">
+                  <Form.Group controlId="employeeId">
                     <Form.Label>Employee Id</Form.Label>
-                    <Form.Control type="text" name="employeeId" id="employeeId" placeholder="Enter Employee Id" onChange={this.handleInputChange} />
+                    <Form.Control required type="number" value={this.state.employeeId.toString()} name="employeeId" placeholder="Enter Employee Id" onChange={this.handleInputChange} />
+                    <Form.Control.Feedback type="invalid">
+                      The Employee Id is already taken or Please enter a valid Employee Id number
+                    </Form.Control.Feedback>
                     <Form.Text className="text-muted">
                       Employee Id will be the username for the employees
                     </Form.Text>
-                  </Form.Group> */}
+                  </Form.Group>
+                  <Button type="submit">Submit</Button>
                 </Form>
               </div>
+              </Modal.Body>
+            </Modal>
+            <Modal show={this.state.employeeModalVisible} onHide={this.closeEmployeeDetailsModal}>
+            <Modal.Header closeButton>
+                <Modal.Title>Employee Details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                  <EmployeeDetailsView employeeDetails= {this.state.selectedEmployeeDetails} employeeList= {this.props.employeeList}/>
+                </Modal.Body>
             </Modal>
           </div>
+
           <br />
         </div>
       </div>

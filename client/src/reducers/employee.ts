@@ -46,6 +46,18 @@ export function reducer(state: State = initialState, action: Action) {
         employeeList: state.employeeList.filter(employee => employee.id !== id)
       }
     }
+    case ActionTypes.GET_EMPLOYEE_LIST: {
+      /*
+       * This is the same as 
+       * const todoId = action.payload.todoId
+       */
+      console.log('in Action Payload');
+      console.log(action.payload);
+      return {
+        ...state,
+        employeeList: action.payload.employeeList
+      }
+    }
     default:
       return state
   }

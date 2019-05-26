@@ -1,4 +1,4 @@
-export default interface Employee {
+export default interface EmployeeModel {
   id: number,
   name: string
 }
