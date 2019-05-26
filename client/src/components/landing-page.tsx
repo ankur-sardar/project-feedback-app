@@ -58,6 +58,7 @@ class LandingPage extends Component<IProps & RouteComponentProps, IState>{
 
   handleSubmitEmployeeLogin = (e: any) => {
     e.preventDefault();
+    sessionStorage.setItem("employeeLoginId", this.state.employeeId);
     this.props.history.push("/employee/" + this.state.employeeId);
   }
 

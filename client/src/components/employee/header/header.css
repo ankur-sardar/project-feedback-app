@@ -1,0 +1,20 @@
+.companyLogo {
+  margin: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 1px darkgray;
+}
+
+.forStyle {
+  font-family: Avenir-Medium;
+  font-size: 15px;
+  /* color: #7A7A7A; */
+  color: grey;
+  text-align: left;
+  line-height: 33px;
+}
+
+.navBar {
+  background-color: rgb(238, 238, 238);
+}

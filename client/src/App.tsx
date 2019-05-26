@@ -41,7 +41,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 const EmployeePage = React.lazy(() => import('./components/employee/employee'));
 const AdminPage = React.lazy(() => import('./components/admin/admin'));
 const EmployeeListView = React.lazy(() => import('./components/admin/employee-list-view/employee-list-view'));
-const EmployeeView = React.lazy(() => import('./components/admin/employee-view/employee-view'));
+const EmployeeView = React.lazy(() => import('./components/employee/employee-view/employee-view'));
 
 
 export class App extends React.Component<IProps & IDispProps, IState>  {

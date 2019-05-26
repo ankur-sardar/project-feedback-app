@@ -1,49 +1,66 @@
 import React from 'react';
 import {
   RouteComponentProps,
-  withRouter
+  withRouter,
+  Redirect
 } from "react-router-dom";
-import EmployeeModel from '../../../models/employee';
-import { http } from "../../../services/employee-service";
 import { Button } from "react-bootstrap";
-import AutoSuggest from "../auto-complete/auto-suggest";
+import './employee-view.css';
+import Header from '../header/header';
 
-interface IProps {
-  employeeDetails: any;
-  employeeList: EmployeeModel[];
+interface MatchParams {
+  employeeId: string;
+}
+
+interface IProps extends RouteComponentProps<MatchParams> {
 }
 
 interface IState {
-  employee: any;
-  employeeEditing: boolean;
-
+  redirect: boolean,
+  employee: any,
+  employeeEditing: boolean
 }
 
 
-class EmployeeDetailsView extends React.Component<IProps, IState> {
+class EmployeeView extends React.Component<IProps, IState> {
 
   constructor(props: any) {
     super(props);
     this.state = {
-      employee: '',
-      employeeEditing: false
+      redirect: false,
+      employeeEditing: false,
+      employee: ''
     }
   }
 
   async componentDidMount() {
+
     fetch('http://localhost:9000/getEmployeeDetails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: this.props.employeeDetails.id }),
+      body: JSON.stringify({ id: this.props.match.params.employeeId }),
     }).then(response => response.json())
       .then(body => {
         console.log(body);
-        this.setState({ employee: body });
+        if (body.error == 'No such document') {
+          console.log("No Data Found");
+          // No data found, so redirecting to the landing page
+          this.setState({ redirect: true });
+        } else {
+          this.setState({ employee: body });
+        }
       });
   }
-
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to='/' />
+    }
+  }
+  onEditButtonPress = () => {
+    this.setState({ employeeEditing: true })
+  }
   handleObjectChange(e: any) {
     let target = e.target;
     let value = target.value;
@@ -51,10 +68,6 @@ class EmployeeDetailsView extends React.Component<IProps, IState> {
     this.setState({
       employee: { ...this.state.employee, [name]: value }
     });
-  }
-
-  onEditButtonPress = () => {
-    this.setState({ employeeEditing: true })
   }
 
   onSaveButtonPress = () => {
@@ -68,16 +81,15 @@ class EmployeeDetailsView extends React.Component<IProps, IState> {
     this.setState({ employeeEditing: false })
   }
 
-  handleAssignReviewTask = (value: any) => {
-    console.log(value);
-    this.setState({
-      employee: { ...this.state.employee, reviewRequestedForEmployeesList: value }
-    });
-  }
-
   render() {
+    if (sessionStorage.getItem('employeeLoginId') == null) {
+      return <Redirect to="/" />;
+    }
     return (
       <div>
+        <Header/>
+      <div className="container">
+        {this.renderRedirect()}
         {this.state.employeeEditing ?
           <Button variant="outline-success" onClick={this.onSaveButtonPress}>Save</Button>
           :
@@ -93,7 +105,7 @@ class EmployeeDetailsView extends React.Component<IProps, IState> {
           </label>
           <div className="col-lg-9 ">
             <span>
-              {this.props.employeeDetails.id}
+              {this.state.employee.id}
             </span>
           </div>
         </div>
@@ -129,26 +141,6 @@ class EmployeeDetailsView extends React.Component<IProps, IState> {
             </div>
           </div>
         }
-
-        {this.state.employeeEditing ?
-          <div>
-            <label>
-              Review Assigned To:
-            </label>
-
-            <AutoSuggest
-              handleChange={this.handleAssignReviewTask}
-              options={this.props.employeeList.filter((item: any) => { return item.id !== this.props.employeeDetails.id })}
-              isMulti={true}
-              creatable={false}
-              defaultValue={
-                this.state.employee.reviewRequestedForEmployeesList
-                  ? this.state.employee.reviewRequestedForEmployeesList
-                  : ""
-              }
-            />
-          </div>
-          :
           <div className="row">
             <label
               className="control-label col-lg-3 socialInfolbl"
@@ -180,12 +172,12 @@ class EmployeeDetailsView extends React.Component<IProps, IState> {
                 )}
             </div>
           </div>
-        }
-
+        
         <b> List of Reviews Part WIP</b>
+      </div>
       </div>
     )
   }
 }
 
-export default EmployeeDetailsView
+export default withRouter(EmployeeView)

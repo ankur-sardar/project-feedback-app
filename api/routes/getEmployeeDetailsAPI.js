@@ -18,6 +18,7 @@ router.post("/", function(req, res) {
   .then((doc => {
     if (!doc.exists) {
       console.log('No such document!');
+      res.send({ error: 'No such document' });
     } else {
       console.log('Document data:', doc.data());
       res.send(doc.data());
